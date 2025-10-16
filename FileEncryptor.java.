@@ -1,0 +1,57 @@
+// File Name: FileEncryptor.java
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class FileEncryptor {
+
+    public static void main(String[] args) {
+        // A simple secret key. You can change this to any character.
+        char secretKey = 'K'; 
+
+        // The name of the file you want to encrypt.
+        // It must be in the same folder as your project.
+        String originalFilePath = "my_secret_message.txt";
+
+        // Names for the output files.
+        String encryptedFilePath = "encrypted_file.dat";
+        String decryptedFilePath = "decrypted_message.txt";
+
+        try {
+            System.out.println("Starting encryption...");
+            encryptFile(originalFilePath, encryptedFilePath, secretKey);
+            System.out.println("File encrypted successfully! Output: " + encryptedFilePath);
+
+            System.out.println("\nStarting decryption...");
+            // We use the SAME function to decrypt! That's the magic of XOR.
+            encryptFile(encryptedFilePath, decryptedFilePath, secretKey);
+            System.out.println("File decrypted successfully! Output: " + decryptedFilePath);
+
+        } catch (IOException e) {
+            System.out.println("An error occurred. Make sure '" + originalFilePath + "' exists in your project folder.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reads a file, encrypts/decrypts its content using a key, and writes to a new file.
+     * @param sourcePath Path of the input file.
+     * @param destinationPath Path for the output file.
+     * @param key The secret key for XOR operation.
+     * @throws IOException If there's an error reading or writing files.
+     */
+    public static void encryptFile(String sourcePath, String destinationPath, char key) throws IOException {
+        try (FileInputStream inputStream = new FileInputStream(sourcePath);
+             FileOutputStream outputStream = new FileOutputStream(destinationPath)) {
+
+            int byteRead;
+            while ((byteRead = inputStream.read()) != -1) {
+                // This is the core encryption/decryption logic!
+                // The ^ symbol is the bitwise XOR operator.
+                int encryptedByte = byteRead ^ key;
+                outputStream.write(encryptedByte);
+            }
+        }
+    }
+}
